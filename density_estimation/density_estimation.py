@@ -136,15 +136,16 @@ if __name__== "__main__":
     plt.show()
 #%%
     #2D
+    #2D의 경우 density_estimation 값은 색으로써 그 정도를 나타
     sample_2d=pd.read_csv(r'https://drive.google.com/uc?export=download&id=1uyPHjquXOIS9TTrG9Nb_gW3sfQEOdY0V')
     sum_stats=sample_2d.describe()
     xmin,ymin=sum_stats.loc['min']-0.5
     xmax,ymax=sum_stats.loc['max']+0.5
     
-    x=np.linspace(xmin,xmax,100)
-    y=np.linspace(ymin,ymax,100)
-    X,Y=np.meshgrid(x,y)
-    Z = np.c_[X.ravel(),Y.ravel()]
+    x=np.linspace(xmin,xmax,100)#100, data
+    y=np.linspace(ymin,ymax,100)#100, data
+    X,Y=np.meshgrid(x,y)#100,100 data
+    Z = np.c_[X.ravel(),Y.ravel()]#10000,2 data
     
     Z1 = kde2d(sample_2d.values,Z,gaussian_2d_kernel,0.5)
     Z1 = np.reshape(Z1, X.shape)
