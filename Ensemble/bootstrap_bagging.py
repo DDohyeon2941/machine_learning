@@ -11,9 +11,6 @@ def create_bootstrap(X,y,ratio):
     # X: input data matrix
     # ratio: sampling ratio
     # return bootstraped dataset (newX,newy)
-    '''
-    대상 범위에서
-    '''
     
     ind=np.random.choice(range(len(X)), replace=True, \
                  size=int(len(X) * ratio))
