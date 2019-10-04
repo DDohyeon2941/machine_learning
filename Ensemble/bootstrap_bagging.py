@@ -8,9 +8,22 @@ import numpy as np
 
 
 def create_bootstrap(X,y,ratio):
-    # X: input data matrix
-    # ratio: sampling ratio
-    # return bootstraped dataset (newX,newy)
+    '''
+    parameters
+    ---------- 
+    X: input data matrix
+    ratio: sampling ratio
+
+
+    Notes
+    ---------- 
+    중복 허용, size는 원래 데이터셋보다 작게 설정 => 원래 보다 적은 수의 샘플 셋 
+
+    return
+    ----------     
+    bootstraped dataset (newX,newy)    
+    '''
+
     
     ind=np.random.choice(range(len(X)), replace=True, \
                  size=int(len(X) * ratio))
@@ -22,21 +35,31 @@ def create_bootstrap(X,y,ratio):
 
     
 def voting(y):
-    # y: 2D matrix with n samples by n_estimators
-    # return voting results by majority voting (1D array)
-    y=y.astype(int)
     
-    '''
+    '''    
+    parameters
+    ---------- 
+    y: 2D matrix with n samples by n_estimators
+    
+    Notes 
+    ---------- 
+    
     array에서 axis 단위의 연산,함수적용(for문을 사용하지 않고)
  
-    parameter
-    - func1d(1d array를 인풋으로 받는 func)
-    - axis => axis 분류
-    - arr func1이 적용될 데이터셋
-    - args func1의 parameter     
+    과정
+    ---------- 
+    array를 sorting(y는 모델 결과값을 담은 array 이므로 값 sorting은 안되어있음)
+    행 단위로 majority voting
+    (unique한 value의 개수 구함 => np.argmax를 통해 가장 많은 개수의 index추출 
+    => 대상 행에서 다시 인덱싱)
+    
     '''
+    
+    y=np.sort(y, axis=1)
+    
+    func_voting = lambda x : x[np.argmax(np.unique(x, return_counts=True)[-1])]
 
-    voting_result=np.argmax(np.apply_along_axis(np.bincount, 1, y ,minlength=3), axis=1)    
+    voting_result=np.apply_along_axis(func_voting, 1, y)    
     
     
     return voting_result
@@ -45,16 +68,24 @@ def voting(y):
     
 # bagging
 def bagging_cls(X,y,n_estimators,k,ratio):
-    # X: input data matrix
-    # y: output target
-    # n_estimators: the number of classifiers
-    # k: the number of nearest neighbors
-    # ratio: sampling ratio
-    # return list of n k-nn models trained by different boostraped sets
     
     '''
+    parameters
+    ----------
+    X: input data matrix
+    y: output target
+    n_estimators: the number of classifiers
+    k: the number of nearest neighbors
+    ratio: sampling ratio
+    
+    Notes
+    ----------
     ensemble 방법 중 input data에 manipulate 하는 방법
     모델을 학습시킬 때 마다 bootstrap한 데이터를 사용
+    
+    return
+    ----------
+    list of n k-nn models trained by different boostraped sets
     '''
 
     model_list=[]
@@ -81,6 +112,8 @@ if __name__== "__main__":
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     
     '''
+    Notes
+    ----------
     np.meshgrid - 좌표 포인트를 격자분포로 바꿈
     
     격자모양 분포로 바꾸기 위해서
@@ -102,6 +135,7 @@ if __name__== "__main__":
         y_models[:,i]=models[i].predict(Z)
     
     y_pred=voting(y_models)
+
         
     # Draw decision boundary
     plt.contourf(xx,yy, np.array(y_pred).reshape(xx.shape), cmap=plt.cm.RdYlBu)
