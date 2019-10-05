@@ -64,7 +64,7 @@ def cal_oob_error(X,y,models,ind):
         oob=np.setdiff1d(np.arange(len(X)), ind[x])
         
         counts_oobs[oob] = counts_oobs[oob]+1
-        counts_True[oob] = counts_True[oob]+(y[oob] == models[x].predict(X[oob]))*1
+        counts_True[oob] = counts_True[oob]+(y[oob] == models[x].predict(X[oob]))
             
     return 1-(counts_True/counts_oobs)
 
@@ -126,6 +126,7 @@ def random_forest(X,y,n_estimators,ratio,params):
 
     models=[]
     ind_set=[]
+
     for model in range(n_estimators):
         newX,newy,ind=create_bootstrap(X,y,ratio)
         clf=DecisionTreeClassifier(max_depth = params['max_depth'], min_samples_split=params['min_samples_split'], min_samples_leaf=params['min_samples_leaf'])
