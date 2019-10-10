@@ -129,7 +129,7 @@ def random_forest(X,y,n_estimators,ratio,params):
 
     for model in range(n_estimators):
         newX,newy,ind=create_bootstrap(X,y,ratio)
-        clf=DecisionTreeClassifier(max_depth = params['max_depth'], min_samples_split=params['min_samples_split'], min_samples_leaf=params['min_samples_leaf'])
+        clf=DecisionTreeClassifier(**params)
         model=clf.fit(newX,newy)
         models.append(model)
         ind_set.append(np.unique(ind))
